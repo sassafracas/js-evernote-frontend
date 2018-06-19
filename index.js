@@ -42,13 +42,13 @@ document.addEventListener("DOMContentLoaded", function () {
       if (event.target === editButton){
         console.log(event)
       } else if (event.target === deleteButton){
-         fetch(`${notesAPI}/${noteObj.id}`, {method: "delete"}).then(response => response.json()).then(deleteNote(event, li))
+         fetch(`${notesAPI}/${noteObj.id}`, {method: "delete"}).then(response => response.json()).then(deleteNote(li))
       }
     })
   }
 
-  function deleteNote (event, li) {
-    li.remove(event.path[2].id)
+  function deleteNote (li) {
+    li.remove(li.id)
   }
 
   function makeNewDetailForm (){
@@ -66,7 +66,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     newNoteForm.addEventListener("submit", function (event){
       event.preventDefault()
-      console.log(event)
       newDetailDiv()
     })
   }
@@ -111,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "Content-Type" : "application/json"
           },
           method: "POST",
-          body: JSON.stringify({title: event.path["0"]["0"].value, body: event.path["0"][1].value, user_id: 1})
+          body: JSON.stringify({title: rightTitle.value, body: rightDetails.value, user_id: 1})
         }
         fetch(notesAPI, config).then(response => response.json()).then(getOneNote)
       })
