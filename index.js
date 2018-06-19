@@ -57,6 +57,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   })
 
+  rightDiv.addEventListener("click", function (event){
+    if (event.target.id === "right-edit-button"){
+      changeDivToForm(event)
+    }
+  })
+
+  function changeDivToForm (event) {
+    newDetailDiv (event)
+
+  }
+
   function makeNewDetailFormFromObj (noteObj) {
     if (!document.getElementById("new-note-div")){
       const newRightDiv = document.createElement("div")
@@ -65,6 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const newNoteButton = document.createElement("input")
       const br1 = document.createElement("br")
 
+      newNoteButton.id = "right-edit-button"
       newNoteButton.setAttribute("type", "submit")
       newNoteButton.setAttribute("value", "Edit")
       newRightH.id = "right-h3"
@@ -84,6 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const newNoteButton = document.createElement("input")
         const br1 = document.createElement("br")
 
+        newNoteButton.id = "right-edit-button"
         newNoteButton.setAttribute("type", "submit")
         newNoteButton.setAttribute("value", "Edit")
         newRightP.textContent = noteObj.body
@@ -93,77 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
         newRightP.appendChild(newNoteButton)
         newRightH.appendChild(newRightP)
       }
-    //New detail form should be a div, then an h
-    // if (!document.getElementById('right-form')) {
-    //   const rightForm = document.createElement("form")
-    //   const rightTitle = document.createElement("input")
-    //   const rightDetails = document.createElement("textarea")
-    //   const br = document.createElement("br")
-    //   const br2 = document.createElement("br")
-    //   const br3 = document.createElement("br")
-    //   const br4 = document.createElement("br")
-    //   const br5 = document.createElement("br")
-    //   const newNoteButton = document.createElement("input")
-    //   const titleText = document.createTextNode("Note Title")
-    //   const descriptionText = document.createTextNode("Note Description")
-    //
-    //   newNoteButton.setAttribute("type", "submit")
-    //   newNoteButton.setAttribute("value", "Save")
-    //   rightTitle.setAttribute("type", "text")
-    //   rightForm.setAttribute("id", "right-form")
-    //   rightTitle.value = noteObj.title
-    //   rightDetails.value = noteObj.body
-    //   rightTitle.id = "note-title"
-    //   rightDetails.id = "note-details"
-    //
-    //   rightForm.appendChild(br2)
-    //   rightForm.appendChild(titleText)
-    //   rightForm.appendChild(br5)
-    //   rightForm.appendChild(rightTitle)
-    //   rightForm.appendChild(br)
-    //   rightForm.appendChild(descriptionText)
-    //   rightForm.appendChild(br4)
-    //   rightForm.appendChild(rightDetails)
-    //   rightForm.appendChild(br3)
-    //   rightForm.appendChild(newNoteButton)
-    //   rightDiv.appendChild(rightForm)
-    //
-    //   rightDiv.addEventListener("submit", function (event) {
-    //     event.preventDefault()
-    //     if (newNoteButton.value === "Save"){
-    //     //console.log(event)
-    //     config = {
-    //       headers: {
-    //         "Content-Type" : "application/json"
-    //       },
-    //       method: "POST",
-    //       body: JSON.stringify({title: rightTitle.value, body: rightDetails.value, user_id: 1})
-    //     }
-    //     fetch(notesAPI, config).then(response => response.json()).then(getOneNote)
-    //
-    //     changeElementType(rightForm, rightTitle, rightDetails, newNoteButton)
-    //
-    //   } else if (newNoteButton.value === "Edit"){
-    //     changeElementType(rightForm, rightTitle, rightDetails, newNoteButton)
-    //   } else if (newNoteButton.value === "Update"){
-    //     console.log(event)
-        // config = {
-        //   headers: {
-        //     "Content-Type" : "application/json"
-        //   },
-        //   method: "PATCH",
-        //   body: JSON.stringify({title: rightTitle.value, body: rightDetails.value, user_id: 1})
-        // }
-        // fetch(`${notesAPI}/${}`, )
-      // }
-      // })
-  // } else {
-  //   const rightTitle = document.getElementById("note-title")
-  //   const rightDetails = document.getElementById("note-details")
-  //
-  //   rightTitle.value = noteObj.title
-  //   rightDetails.value = noteObj.body
-  // }
+
   }
 
   function deleteNote (event) {
@@ -207,6 +150,8 @@ document.addEventListener("DOMContentLoaded", function () {
       newNoteButton.setAttribute("value", "Save")
       rightTitle.setAttribute("type", "text")
       rightForm.setAttribute("id", "right-form")
+      rightTitle.id = "right-title"
+      rightDetails.id = "right-details"
 
       rightForm.appendChild(br2)
       rightForm.appendChild(titleText)
@@ -218,6 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
       rightForm.appendChild(rightDetails)
       rightForm.appendChild(br3)
       rightForm.appendChild(newNoteButton)
+      if (!event.target.id === "right-edit-button") {
       rightDiv.appendChild(rightForm)
 
       rightDiv.addEventListener("submit", function (event) {
@@ -249,6 +195,11 @@ document.addEventListener("DOMContentLoaded", function () {
         // fetch(`${notesAPI}/${}`, )
       }
       })
+    } else {
+      rightDiv.appendChild(rightForm)
+      changeElementType (rightForm, rightTitle, rightDetails, newNoteButton)
+    }
+
   }
 
   }
