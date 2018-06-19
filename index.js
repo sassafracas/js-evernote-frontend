@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const notesAPI = "http://localhost:3000/api/v1/notes"
   const ul = document.getElementById("note-ul")
   const div = document.getElementById('left-bar')
+  const rightDiv = document.getElementById("right-bar")
 
   function getAllNotes () {
     fetch(notesAPI).then(response => response.json()).then(iterateNotes)
@@ -59,7 +60,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     inputButton.setAttribute("type", "submit")
     inputButton.setAttribute("value", "Make A New Note")
-    //newNoteForm.innerText = "a"
     newNoteForm.appendChild(br)
     newNoteForm.appendChild(inputButton)
     body.appendChild(newNoteForm)
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function newDetailDiv () {
-    const rightDiv = document.getElementById("right-bar")
+
     if (!document.getElementById('right-form')) {
       const rightForm = document.createElement("form")
       const rightTitle = document.createElement("input")
@@ -104,6 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       rightDiv.addEventListener("submit", function (event) {
         event.preventDefault()
+        if (newNoteButton.value === "Save"){
         //console.log(event)
         config = {
           headers: {
@@ -113,9 +114,37 @@ document.addEventListener("DOMContentLoaded", function () {
           body: JSON.stringify({title: rightTitle.value, body: rightDetails.value, user_id: 1})
         }
         fetch(notesAPI, config).then(response => response.json()).then(getOneNote)
+
+        changeElementType(rightForm, rightTitle, rightDetails, newNoteButton)
+
+      } else if (newNoteButton.value === "Edit"){
+        changeElementType(rightForm, rightTitle, rightDetails, newNoteButton)
+      }
       })
   }
   }
+
+  function changeElementType (rightForm, rightTitle, rightDetails, newNoteButton) {
+    if (!document.getElementById("right-h3")) {
+      const newRightDiv = document.createElement("div")
+      const newRightH = document.createElement("h3")
+      const newRightP = document.createElement("p")
+
+      newRightH.id = "right-h3"
+      newRightH.innerText = rightTitle.value
+      newRightP.innerText = rightDetails.value
+
+      // rightForm.remove()
+    //  rightForm.replaceChild(newRightDiv, rightForm)
+      rightTitle.parentNode.replaceChild(newRightH, rightTitle)
+      rightDetails.parentNode.replaceChild(newRightP, rightDetails)
+      newNoteButton.setAttribute("value", "Edit")
+  } else {
+    console.log("wa now")
+  }
+  }
+
+
 
   function startApp () {
     getAllNotes()
