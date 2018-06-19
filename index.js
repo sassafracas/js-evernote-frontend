@@ -23,8 +23,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     li.setAttribute("id", noteObj.id)
     editButton.setAttribute("class", "edit")
+    editButton.id = "edit-button"
     editButton.innerText = "Edit"
     deleteButton.setAttribute("class", "delete")
+    deleteButton.id = "delete-button"
     deleteButton.innerText = "Delete"
 
     h2.innerText = noteObj.title
@@ -38,18 +40,98 @@ document.addEventListener("DOMContentLoaded", function () {
     li.appendChild(p)
     ul.appendChild(li)
     div.appendChild(ul)
-
-    ul.addEventListener('click', function (event){
-      if (event.target === editButton){
-        console.log(event)
-      } else if (event.target === deleteButton){
-         fetch(`${notesAPI}/${noteObj.id}`, {method: "delete"}).then(response => response.json()).then(deleteNote(li))
-      }
-    })
   }
 
-  function deleteNote (li) {
-    li.remove(li.id)
+  ul.addEventListener('click', function (event){
+    const editButton = document.getElementById("edit-button")
+    const deleteButton = document.getElementById("delete-button")
+
+    if (event.target.id === "edit-button"){
+      newDetailDiv(event)
+    } else if (event.target.id === "delete-button"){
+      console.log(event)
+       fetch(`${notesAPI}/${event.path[2].id}`, {method: "delete"}).then(response => response.json()).then(deleteNote(event))
+    } else if (event.target.tagName === "P" || event.target.tagName === "H2"){
+      console.log(event)
+      fetch(`${notesAPI}/${event.path[1].id}`).then(r => r.json()).then(makeNewDetailFormFromObj)
+    }
+  })
+
+  function makeNewDetailFormFromObj (noteObj) {
+    if (!document.getElementById('right-form')) {
+      const rightForm = document.createElement("form")
+      const rightTitle = document.createElement("input")
+      const rightDetails = document.createElement("textarea")
+      const br = document.createElement("br")
+      const br2 = document.createElement("br")
+      const br3 = document.createElement("br")
+      const br4 = document.createElement("br")
+      const br5 = document.createElement("br")
+      const newNoteButton = document.createElement("input")
+      const titleText = document.createTextNode("Note Title")
+      const descriptionText = document.createTextNode("Note Description")
+
+      newNoteButton.setAttribute("type", "submit")
+      newNoteButton.setAttribute("value", "Save")
+      rightTitle.setAttribute("type", "text")
+      rightForm.setAttribute("id", "right-form")
+      rightTitle.value = noteObj.title
+      rightDetails.value = noteObj.body
+      rightTitle.id = "note-title"
+      rightDetails.id = "note-details"
+
+      rightForm.appendChild(br2)
+      rightForm.appendChild(titleText)
+      rightForm.appendChild(br5)
+      rightForm.appendChild(rightTitle)
+      rightForm.appendChild(br)
+      rightForm.appendChild(descriptionText)
+      rightForm.appendChild(br4)
+      rightForm.appendChild(rightDetails)
+      rightForm.appendChild(br3)
+      rightForm.appendChild(newNoteButton)
+      rightDiv.appendChild(rightForm)
+
+      rightDiv.addEventListener("submit", function (event) {
+        event.preventDefault()
+        if (newNoteButton.value === "Save"){
+        //console.log(event)
+        config = {
+          headers: {
+            "Content-Type" : "application/json"
+          },
+          method: "POST",
+          body: JSON.stringify({title: rightTitle.value, body: rightDetails.value, user_id: 1})
+        }
+        fetch(notesAPI, config).then(response => response.json()).then(getOneNote)
+
+        changeElementType(rightForm, rightTitle, rightDetails, newNoteButton)
+
+      } else if (newNoteButton.value === "Edit"){
+        changeElementType(rightForm, rightTitle, rightDetails, newNoteButton)
+      } else if (newNoteButton.value === "Update"){
+        console.log(event)
+        // config = {
+        //   headers: {
+        //     "Content-Type" : "application/json"
+        //   },
+        //   method: "PATCH",
+        //   body: JSON.stringify({title: rightTitle.value, body: rightDetails.value, user_id: 1})
+        // }
+        // fetch(`${notesAPI}/${}`, )
+      }
+      })
+  } else {
+    const rightTitle = document.getElementById("note-title")
+    const rightDetails = document.getElementById("note-details")
+    
+    rightTitle.value = noteObj.title
+    rightDetails.value = noteObj.body
+  }
+  }
+
+  function deleteNote (event) {
+    event.path[2].remove(event.path[2].id)
   }
 
   function makeNewDetailForm (){
@@ -66,12 +148,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     newNoteForm.addEventListener("submit", function (event){
       event.preventDefault()
-      newDetailDiv()
+      newDetailDiv(event)
     })
   }
 
-  function newDetailDiv () {
-
+  function newDetailDiv (event) {
+  //  console.log(event)
     if (!document.getElementById('right-form')) {
       const rightForm = document.createElement("form")
       const rightTitle = document.createElement("input")
@@ -119,9 +201,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
       } else if (newNoteButton.value === "Edit"){
         changeElementType(rightForm, rightTitle, rightDetails, newNoteButton)
+      } else if (newNoteButton.value === "Update"){
+        console.log(event)
+        // config = {
+        //   headers: {
+        //     "Content-Type" : "application/json"
+        //   },
+        //   method: "PATCH",
+        //   body: JSON.stringify({title: rightTitle.value, body: rightDetails.value, user_id: 1})
+        // }
+        // fetch(`${notesAPI}/${}`, )
       }
       })
   }
+
   }
 
   function changeElementType (rightForm, rightTitle, rightDetails, newNoteButton) {
@@ -132,6 +225,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       newRightH.id = "right-h3"
       newRightH.innerText = rightTitle.value
+      newRightP.id = "right-p"
       newRightP.innerText = rightDetails.value
 
       // rightForm.remove()
@@ -140,7 +234,12 @@ document.addEventListener("DOMContentLoaded", function () {
       rightDetails.parentNode.replaceChild(newRightP, rightDetails)
       newNoteButton.setAttribute("value", "Edit")
   } else {
-    console.log("wa now")
+    const newRightH = document.getElementById("right-h3")
+    const newRightP = document.getElementById("right-p")
+
+    newRightH.parentNode.replaceChild(rightTitle, newRightH)
+    newRightP.parentNode.replaceChild(rightDetails, newRightP)
+    newNoteButton.setAttribute("value", "Update")
   }
   }
 
