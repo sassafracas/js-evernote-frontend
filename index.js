@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const deleteButton = document.createElement("button")
     const br = document.createElement("br")
 
+    li.setAttribute("id", noteObj.id)
     editButton.setAttribute("class", "edit")
     editButton.innerText = "Edit"
     deleteButton.setAttribute("class", "delete")
@@ -39,11 +40,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     ul.addEventListener('click', function (event){
       if (event.target === editButton){
-        console.log("hi")
+        console.log(event)
       } else if (event.target === deleteButton){
-        // fetch(`${notesAPI}/${noteObj.id}`, {method: "delete"}).then(response => response.json()).then(json => return json)
+         fetch(`${notesAPI}/${noteObj.id}`, {method: "delete"}).then(response => response.json()).then(deleteNote(event, li))
       }
     })
+  }
+
+  function deleteNote (event, li) {
+    li.remove(event.path[2].id)
   }
 
   function makeNewDetailForm (){
