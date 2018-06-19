@@ -206,7 +206,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function changeElementType (rightForm, rightTitle, rightDetails, newNoteButton) {
     if (!document.getElementById("right-h3")) {
-      const newRightDiv = document.createElement("div")
       const newRightH = document.createElement("h3")
       const newRightP = document.createElement("p")
 
@@ -223,9 +222,12 @@ document.addEventListener("DOMContentLoaded", function () {
   } else {
     const newRightH = document.getElementById("right-h3")
     const newRightP = document.getElementById("right-p")
+    const newRightDiv = document.getElementById("new-note-div")
+
 
     newRightH.parentNode.replaceChild(rightTitle, newRightH)
     newRightP.parentNode.replaceChild(rightDetails, newRightP)
+    newRightDiv.parentNode.replaceChild(rightForm, newRightDiv)
     newNoteButton.setAttribute("value", "Update")
   }
   }
