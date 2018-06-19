@@ -58,8 +58,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const br = document.createElement("br")
 
     inputButton.setAttribute("type", "submit")
-    inputButton.setAttribute("value", "Submit")
-    newNoteForm.innerText = "New Note"
+    inputButton.setAttribute("value", "Make A New Note")
+    //newNoteForm.innerText = "a"
     newNoteForm.appendChild(br)
     newNoteForm.appendChild(inputButton)
     body.appendChild(newNoteForm)
@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const descriptionText = document.createTextNode("Note Description")
 
       newNoteButton.setAttribute("type", "submit")
-      newNoteButton.setAttribute("value", "New Note")
+      newNoteButton.setAttribute("value", "Save")
       rightTitle.setAttribute("type", "text")
       rightForm.setAttribute("id", "right-form")
 
