@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function iterateNotes (notesObjs) {
     notesObjs.forEach(getOneNote)
   }
-
+//1
   function getOneNote (noteObj) {
     const li = document.createElement("li")
     const h2 = document.createElement("h2")
@@ -41,6 +41,23 @@ document.addEventListener("DOMContentLoaded", function () {
     ul.appendChild(li)
     div.appendChild(ul)
   }
+//2
+  function makeNewDetailForm (){
+    const newNoteForm = document.createElement("form")
+    const inputButton = document.createElement("input")
+    const br = document.createElement("br")
+
+    inputButton.setAttribute("type", "submit")
+    inputButton.setAttribute("value", "Make A New Note")
+    newNoteForm.appendChild(br)
+    newNoteForm.appendChild(inputButton)
+    div.appendChild(newNoteForm)
+
+    newNoteForm.addEventListener("submit", function (event){
+      event.preventDefault()
+      newDetailDiv(event)
+    })
+  }
 
   ul.addEventListener('click', function (event){
     const editButton = document.getElementById("edit-button")
@@ -53,7 +70,11 @@ document.addEventListener("DOMContentLoaded", function () {
        fetch(`${notesAPI}/${event.path[2].id}`, {method: "delete"}).then(response => response.json()).then(deleteNote(event))
     } else if (event.target.tagName === "P" || event.target.tagName === "H2"){
       console.log(event)
+      if (!document.getElementById("right-form")){
       fetch(`${notesAPI}/${event.path[1].id}`).then(r => r.json()).then(makeNewDetailFormFromObj)
+    } else {
+      //change form back to div
+    }
     }
   })
 
@@ -61,6 +82,41 @@ document.addEventListener("DOMContentLoaded", function () {
     if (event.target.id === "right-edit-button"){
       changeDivToForm(event)
     }
+  })
+
+  rightDiv.addEventListener("submit", function (event) {
+    event.preventDefault()
+    if (event.target[2].attributes[1].value === "Save"){
+      const rightTitle = document.getElementById("right-title")
+      const rightDetails = document.getElementById("right-details")
+      const rightForm = document.getElementById("right-form")
+      const newNoteButton = document.querySelector("[value=Save]")
+
+      config = {
+        headers: {
+          "Content-Type" : "application/json"
+        },
+        method: "POST",
+        body: JSON.stringify({title: rightTitle.value, body: rightDetails.value, user_id: 1})
+      }
+      fetch(notesAPI, config).then(response => response.json()).then(getOneNote)
+
+      changeElementType(rightForm, rightTitle, rightDetails, newNoteButton)
+
+    } else if (event.target.value === "Edit"){
+        changeElementType(rightForm, rightTitle, rightDetails, newNoteButton)
+    } else if (event.target.value === "Update"){
+
+        console.log(event)
+        // config = {
+        //   headers: {
+        //     "Content-Type" : "application/json"
+        //   },
+        //   method: "PATCH",
+        //   body: JSON.stringify({title: rightTitle.value, body: rightDetails.value, user_id: 1})
+        // }
+        // fetch(`${notesAPI}/${}`, )
+      }
   })
 
   function changeDivToForm (event) {
@@ -96,9 +152,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const newNoteButton = document.createElement("input")
         const br1 = document.createElement("br")
 
-        newNoteButton.id = "right-edit-button"
+
         newNoteButton.setAttribute("type", "submit")
         newNoteButton.setAttribute("value", "Edit")
+        newNoteButton.id = "right-save"
         newRightP.textContent = noteObj.body
         newRightH.textContent = noteObj.title
 
@@ -113,24 +170,8 @@ document.addEventListener("DOMContentLoaded", function () {
     event.path[2].remove(event.path[2].id)
   }
 
-  function makeNewDetailForm (){
-    const body = document.getElementById('main-body')
-    const newNoteForm = document.createElement("form")
-    const inputButton = document.createElement("input")
-    const br = document.createElement("br")
 
-    inputButton.setAttribute("type", "submit")
-    inputButton.setAttribute("value", "Make A New Note")
-    newNoteForm.appendChild(br)
-    newNoteForm.appendChild(inputButton)
-    div.appendChild(newNoteForm)
-
-    newNoteForm.addEventListener("submit", function (event){
-      event.preventDefault()
-      newDetailDiv(event)
-    })
-  }
-
+//3
   function newDetailDiv (event) {
   //  console.log(event)
     if (!document.getElementById('right-form')) {
@@ -163,41 +204,19 @@ document.addEventListener("DOMContentLoaded", function () {
       rightForm.appendChild(rightDetails)
       rightForm.appendChild(br3)
       rightForm.appendChild(newNoteButton)
+//4
       if (!event.target.id === "right-edit-button") {
       rightDiv.appendChild(rightForm)
 
-      rightDiv.addEventListener("submit", function (event) {
-        event.preventDefault()
-        if (newNoteButton.value === "Save"){
-        //console.log(event)
-        config = {
-          headers: {
-            "Content-Type" : "application/json"
-          },
-          method: "POST",
-          body: JSON.stringify({title: rightTitle.value, body: rightDetails.value, user_id: 1})
-        }
-        fetch(notesAPI, config).then(response => response.json()).then(getOneNote)
 
-        changeElementType(rightForm, rightTitle, rightDetails, newNoteButton)
-
-      } else if (newNoteButton.value === "Edit"){
-        changeElementType(rightForm, rightTitle, rightDetails, newNoteButton)
-      } else if (newNoteButton.value === "Update"){
-        console.log(event)
-        // config = {
-        //   headers: {
-        //     "Content-Type" : "application/json"
-        //   },
-        //   method: "PATCH",
-        //   body: JSON.stringify({title: rightTitle.value, body: rightDetails.value, user_id: 1})
-        // }
-        // fetch(`${notesAPI}/${}`, )
-      }
-      })
     } else {
+//5
       rightDiv.appendChild(rightForm)
-      changeElementType (rightForm, rightTitle, rightDetails, newNoteButton)
+
+      newDetailDiv(event)
+
+  //    debugger
+  //    changeElementType (rightForm, rightTitle, rightDetails, newNoteButton)
     }
 
   }
