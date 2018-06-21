@@ -12,7 +12,8 @@ document.addEventListener("DOMContentLoaded", function () {
   function iterateNotes (notesObjs) {
     notesObjs.forEach(getOneNote)
   }
-//1
+//1 - Each note gets iterated and appended to the left div
+//  - An li, h2, p, edit button, delete button gets appended to the div
   function getOneNote (noteObj) {
     const li = document.createElement("li")
     const h2 = document.createElement("h2")
@@ -41,20 +42,18 @@ document.addEventListener("DOMContentLoaded", function () {
     ul.appendChild(li)
     div.appendChild(ul)
   }
-//2
-  function makeNewDetailForm (){
-    const newNoteForm = document.createElement("form")
+//2 - A make new notes button gets appended to the left div
+//  - An event listener goes on the button, and sends clicks to the make a new details div function
+  function makeNewFormButton (){
     const inputButton = document.createElement("input")
     const br = document.createElement("br")
 
     inputButton.setAttribute("type", "submit")
     inputButton.setAttribute("value", "Make A New Note")
-    newNoteForm.appendChild(br)
-    newNoteForm.appendChild(inputButton)
-    div.appendChild(newNoteForm)
+    inputButton.appendChild(br)
+    div.appendChild(inputButton)
 
-    newNoteForm.addEventListener("submit", function (event){
-      event.preventDefault()
+    inputButton.addEventListener("click", function (event){
       newDetailDiv(event)
     })
   }
@@ -83,10 +82,14 @@ document.addEventListener("DOMContentLoaded", function () {
       changeDivToForm(event)
     }
   })
-
+//4 - The user now has an option to save what they put into the details form
+//  - The listener on the div listens for a click, if the click comes from a save the first if statement gets triggered
   rightDiv.addEventListener("submit", function (event) {
     event.preventDefault()
-    if (event.target[2].attributes[1].value === "Save"){
+    if (event.target[2]){
+//5 - Clicking the save button triggers this code block
+//  - Gets all the information from the form and posts it with a fetch and then function call to the list creation function
+//  - Makes a function call to the function that changes form/input/textarea elements to div/h3/p
       const rightTitle = document.getElementById("right-title")
       const rightDetails = document.getElementById("right-details")
       const rightForm = document.getElementById("right-form")
@@ -103,7 +106,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
       changeElementType(rightForm, rightTitle, rightDetails, newNoteButton)
 
-    } else if (event.target.value === "Edit"){
+    } else if (event.target["0"].defaultValue === "Edit"){
+      console.log(event)
+      const rightForm = document.getElementById("right-form")
+      const rightTitle = document.createElement("input")
+      const rightDetails = document.createElement("textarea")
+      const newNoteButton = document.querySelector("[value=Edit]")
+
+      rightTitle.setAttribute("type", "text")
+      rightTitle.id = "right-title"
+      rightDetails.id = "right-details"
+
         changeElementType(rightForm, rightTitle, rightDetails, newNoteButton)
     } else if (event.target.value === "Update"){
 
@@ -171,7 +184,9 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 
-//3
+//3 - This makes a new details form
+//  - Checks if a form exists first
+//    - If it doesn't exist it creates a form
   function newDetailDiv (event) {
   //  console.log(event)
     if (!document.getElementById('right-form')) {
@@ -204,25 +219,29 @@ document.addEventListener("DOMContentLoaded", function () {
       rightForm.appendChild(rightDetails)
       rightForm.appendChild(br3)
       rightForm.appendChild(newNoteButton)
-//4
-      if (!event.target.id === "right-edit-button") {
       rightDiv.appendChild(rightForm)
-
-
-    } else {
-//5
-      rightDiv.appendChild(rightForm)
-
-      newDetailDiv(event)
-
-  //    debugger
-  //    changeElementType (rightForm, rightTitle, rightDetails, newNoteButton)
-    }
+//       if (!event.target.id === "right-edit-button") {
+//
+//
+//       debugger
+//
+//     } else {
+//
+//
+//       rightDiv.appendChild(rightForm)
+//
+//       newDetailDiv(event)
+//
+//   //    debugger
+//   //    changeElementType (rightForm, rightTitle, rightDetails, newNoteButton)
+//     }
 
   }
 
   }
 
+//6 - This function changes form/input/textarea elements to div/h3/p
+//  - It goes into the if code block since h3 doesn't exist
   function changeElementType (rightForm, rightTitle, rightDetails, newNoteButton) {
     if (!document.getElementById("right-h3")) {
       const newRightH = document.createElement("h3")
@@ -243,7 +262,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const newRightP = document.getElementById("right-p")
     const newRightDiv = document.getElementById("new-note-div")
 
-
+    console.log(rightTitle)
+    console.log(newRightH)
     newRightH.parentNode.replaceChild(rightTitle, newRightH)
     newRightP.parentNode.replaceChild(rightDetails, newRightP)
     newRightDiv.parentNode.replaceChild(rightForm, newRightDiv)
@@ -255,7 +275,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function startApp () {
     getAllNotes()
-    makeNewDetailForm()
+    makeNewFormButton()
   }
 
   startApp()
